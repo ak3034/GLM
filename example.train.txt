@@ -1,0 +1,25 @@
+Don't	VERB
+let	VERB
+your	DET
+education	NOUN
+get	VERB
+in	PRT
+the	DET
+way	NOUN
+of	PRT
+your	DET
+learning	VERB
+.	.
+
+Thus	DET
+spoke	VERB
+Zarathustra	NOUN
+.	.
+
+We	PRON
+all	ADV
+live	VERB
+in	PRT
+a	DET
+yellow	ADJ
+submarine	NOUN
