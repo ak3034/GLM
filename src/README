@@ -1,0 +1,149 @@
+===========
+GLM
+===========
+
+GLM provides a Global Linear Model based approach to solving the 
+Part-Of-Speech Tagging problem. Typical usage
+often looks like this::
+
+    #!/usr/bin/env python
+
+	from GLM import *
+
+	if __name__ == '__main__':
+	
+    training_file = open("tag_train.dat")
+    testing_file = open("tag_dev.dat")
+    
+    bigram = N_Gram_Feature_Template(2)
+ 
+    feature_set = Feature_Set([bigram])
+    
+	train_iter = MyKeyFileIterator(training_file)
+    dev_iter = MyDevFileIterator(testing_file)
+    dev_writer = DevFileWriter("output.file")
+    
+    #Create the scheme
+    gen = NGramHistoryGenerator(2)
+    enc = NGramHistoryEncoder(2)
+    dec = NGramHistoryDecoder(2)
+    scheme = NGramHistoryScheme(gen,enc,dec)
+    
+    #Create the percepton and train.
+    p = Perceptron(scheme,feature_set)
+    p.train(5,train_iter)
+    p.save("2G.model")
+    p.load("2G.model")
+    p.test(dev_iter,dev_writer)
+
+Input
+=========
+
+Iterators
+------------
+
+The GLM package currently only supports concrete iterators that deal with the following
+file formats:
+
+Key Files and Training Files are assumed to share the same format. The KeyFileIterator class that takes
+a filehandle as input must have the file in the following format.
+
+The	DET
+long	ADJ
+and	CONJ
+winding	ADJ
+road	NOUN
+...	.
+
+James	NOUN
+Joyce	NOUN
+-	.
+
+Similarly Development/Testing files have a similar format excluding the tag.
+
+That
+takes
+you
+home
+.
+
+If you have a different file format and wish to create different iterators, it is necessary for you to extend the
+GLM.KeyFileIterator class and GLM.DevFileIterator. It is also necessary that when overloading the read() method for
+both these classes that classes extending GLM.KeyFileIterator return a tuple of size 2 and that classes extending
+GLM.DevFileIterator return an iterable object.
+
+Loading Models
+---------------
+It is possible to load files that have been previously saved by the Perceptron model using the Perceptron.load method.
+
+Output
+=========
+
+Writers
+---------
+The GLM package currently only supports concrete writers that are responsible for outputting files in the aforementioned
+Key File Format.
+
+If wish to create a key file of a different format, it is necessary for you to extend the GLM.DevFileIterator class and
+overloading the write method.
+
+Saving Models
+---------------
+Once the perceptron algorithm has trained on a corpus it is possible to save the language model to a file using the
+Perceptrion.save method.
+
+
+Features
+============
+
+Three feature templates have already been implemented that provide support for Suffices, NGram and Word/Tag associations.
+
+Suffix Feature Template
+------------------------------------------------
+To create a new Suffix Feature do the following:
+
+suffix = SuffixFeatureTemplate(3)
+
+This creates a feature that associates a Tag at position X with the last letters of the word at position X.
+
+If the length of the explicit parameter exceeds the length of the word at position X, the entire word is
+taken as the Suffix associated with that history. 
+
+The SuffixFeatureTemplate requires that the explicit parameter be an integer greater than 0.
+
+NGramFeatureTemplate
+------------------------------------------------
+To create an N-Gram Feature Template do the following:
+
+trigram = NGramFeatureTemplate(3)
+
+This creates a feature that associates a generated history at position X with a tag at position X.
+
+The NGramFeatureTemplate requires that the explicit parameter be an integer greater than 0.
+
+TagFeatureTemplate
+------------------------------------------------
+To create an N-Gram Feature Template do the following:
+
+trigram = NGramFeatureTemplate(3)
+
+This creates a feature that associates a generated history at position X with a tag at position X.
+
+The NGramFeatureTemplate requires that the explicit parameter be an integer greater than 0.
+
+Scheme
+============
+
+Currently only NGramHistory based schemes have been implemented.
+
+In order for certain features to be support an appropriate scheme must be chosen. For example if the user would
+like to create a trigram feature it is imperative that a generator of input arguement 3 is created else an
+error will occur.
+
+The scheme's must also be consolidated in the sense that gen, enc and dec must all share the same history based
+NGram value. 
+
+Credits & Acknowledgements
+============
+
+Michael Collins (mcollins@cs.columbia.edu) 

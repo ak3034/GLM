@@ -1,0 +1,7 @@
+Evaluating Files
+
+Once used your language model to output to a file, test the success of your language model using the Evaluator.py script. 
+
+Usage is as follows
+
+python Evaluator.py keyfile outputfile
